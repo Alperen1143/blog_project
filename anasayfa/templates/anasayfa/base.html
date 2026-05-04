@@ -1,0 +1,32 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Blog Sitem{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'anasayfa/css/style.css' %}">
+</head>
+<body>
+
+<header class="navbar">
+    <div class="logo">Blog Sitem</div>
+
+    <nav>
+        <a href="/">Ana Sayfa</a>
+        <a href="/blog/">Blog</a>
+        <a href="/admin/">Admin</a>
+    </nav>
+</header>
+
+<main class="container">
+    {% block content %}
+    {% endblock %}
+</main>
+
+<footer class="footer">
+    <p>© 2026 Blog Sitem</p>
+</footer>
+
+</body>
+</html>
