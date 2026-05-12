@@ -1,10 +1,278 @@
-{% extends "anasayfa/base.html" %}
+{% load static %}
 
-{% block title %}Ana Sayfa{% endblock %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% block content %}
-<h1>Blog Sitemize Hoş Geldiniz</h1>
-<p>Burada blog yazılarımızı paylaşacağız.</p>
+<title>Ana Sayfa</title>
 
-<a href="/blog/" class="btn">Blog Yazılarına Git</a>
-{% endblock %}
+<style>
+
+:root{
+    --koyu-lacivert:#0f172a;
+    --lacivert:#1e293b;
+    --orta-lacivert:#334155;
+
+    --beyaz:#ffffff;
+    --acik-gri:#e2e8f0;
+    --gri:#d1d5db;
+
+    --mor:#6366f1;
+    --mor-koyu:#4f46e5;
+
+    --siyah:#111827;
+    --koyu-gri:#374151;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    min-height:100vh;
+
+    background:linear-gradient(
+        135deg,
+        var(--koyu-lacivert),
+        var(--lacivert),
+        var(--orta-lacivert)
+    );
+
+    color:var(--beyaz);
+}
+.navbar{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 60px;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:bold;
+    letter-spacing:1px;
+}
+
+.menu{
+    display:flex;
+    gap:15px;
+}
+
+.menu button{
+    padding:10px 18px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.giris-navbar{
+    background:var(--beyaz);
+    color:var(--siyah);
+}
+
+.giris-navbar:hover{
+    background:var(--acik-gri);
+}
+
+.kayit-navbar{
+    background:var(--mor);
+    color:var(--beyaz);
+}
+
+.kayit-navbar:hover{
+    background:var(--mor-koyu);
+}
+
+/* ANA SAYFA */
+.hero{
+    height:85vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:20px;
+}
+
+.hero h1{
+    font-size:55px;
+    margin-bottom:20px;
+}
+
+.hero p{
+    max-width:700px;
+    font-size:18px;
+    color:var(--gri);
+    line-height:1.6;
+}
+.container{
+    width:370px;
+
+    /* daha koyu ve daha mat */
+    background:rgba(15, 23, 42, 0.92);
+
+    backdrop-filter:blur(6px);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    border-radius:20px;
+
+    padding:35px;
+
+    color:var(--beyaz);
+
+    box-shadow:0 0 25px rgba(0,0,0,0.5);
+
+    position:fixed;
+
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+
+    display:none;
+}
+
+.container h1{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    margin-top:12px;
+
+    border:none;
+    border-radius:10px;
+
+    /* daha az şeffaf → okunabilirlik arttı */
+    background:rgba(255,255,255,0.08);
+
+    color:var(--beyaz);
+    outline:none;
+}
+
+input::placeholder{
+    color:var(--gri);
+}
+
+.form-btn{
+    width:100%;
+    padding:14px;
+    margin-top:15px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.giris-btn{
+    background:var(--acik-gri);
+    color:var(--siyah);
+}
+
+.kayit-btn{
+    background:var(--mor);
+    color:var(--beyaz);
+}
+
+.geri-btn{
+    background:var(--koyu-gri);
+    color:var(--beyaz);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="logo">BLOG</div>
+
+    <div class="menu">
+        <button class="giris-navbar" onclick="girisAc()">Giriş Yap</button>
+        <button class="kayit-navbar" onclick="kayitAc()">Kayıt Ol</button>
+    </div>
+</div>
+
+<div class="hero">
+    <h1>Hoş Geldiniz</h1>
+    <p>
+        Hesap oluşturmadan içerikleri keşfedebilir,
+        yazıları okuyabilir ve platformu deneyimleyebilirsiniz.
+        Ancak, yorum yapma, içerik paylaşma ve diğer etkileşimli özelliklerden yararlanmak için bir hesap oluşturmanız gerekmektedir.
+        Hemen kaydolun ve topluluğumuza katılın!
+    </p>
+</div>
+
+<div class="container" id="girisForm">
+    <h1>Giriş Yap</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="text" placeholder="Kullanıcı Adı">
+        <input type="password" placeholder="Şifre">
+
+        <button type="submit" class="form-btn giris-btn">
+            Giriş Yap
+        </button>
+    </form>
+
+    <button class="form-btn geri-btn" onclick="kapat()">
+        Kapat
+    </button>
+</div>
+
+<div class="container" id="kayitForm">
+    <h1>Kayıt Ol</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="text" placeholder="Ad Soyad">
+        <input type="text" placeholder="Kullanıcı Adı">
+        <input type="email" placeholder="E-Mail">
+        <input type="tel" placeholder="Telefon Numarası">
+        <input type="password" placeholder="Şifre">
+        <input type="password" placeholder="Şifre Tekrar">
+
+        <button type="submit" class="form-btn kayit-btn">
+            Hesap Oluştur
+        </button>
+    </form>
+
+    <button class="form-btn geri-btn" onclick="kapat()">
+        Kapat
+    </button>
+</div>
+
+<script>
+function girisAc(){
+    document.getElementById("girisForm").style.display="block";
+    document.getElementById("kayitForm").style.display="none";
+}
+
+function kayitAc(){
+    document.getElementById("kayitForm").style.display="block";
+    document.getElementById("girisForm").style.display="none";
+}
+
+function kapat(){
+    document.getElementById("girisForm").style.display="none";
+    document.getElementById("kayitForm").style.display="none";
+}
+</script>
+
+</body>
+</html>
