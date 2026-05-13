@@ -1,10 +1,75 @@
 {% extends "anasayfa/base.html" %}
+{% load static %}
 
 {% block title %}Ana Sayfa{% endblock %}
 
 {% block content %}
-<h1>Blog Sitemize Hoş Geldiniz</h1>
-<p>Burada blog yazılarımızı paylaşacağız.</p>
 
-<a href="/blog/" class="btn">Blog Yazılarına Git</a>
+<section class="hero">
+    <h1>Hoş Geldiniz</h1>
+    <p>
+        Hesap oluşturmadan içerikleri keşfedebilir,
+        yazıları okuyabilir ve platformu deneyimleyebilirsiniz.
+    </p>
+
+    
+</section>
+
+<div class="form-container" id="girisForm">
+    <h1>Giriş Yap</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" placeholder="Kullanıcı Adı">
+        <input type="password" placeholder="Şifre">
+
+        <button type="submit" class="form-btn giris-btn">
+            Giriş Yap
+        </button>
+    </form>
+
+    <button class="form-btn geri-btn" onclick="kapat()">
+        Kapat
+    </button>
+</div>
+
+<div class="form-container" id="kayitForm">
+    <h1>Kayıt Ol</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" placeholder="Ad Soyad">
+        <input type="text" placeholder="Kullanıcı Adı">
+        <input type="email" placeholder="E-Mail">
+        <input type="tel" placeholder="Telefon Numarası">
+        <input type="password" placeholder="Şifre">
+        <input type="password" placeholder="Şifre Tekrar">
+
+        <button type="submit" class="form-btn kayit-btn">
+            Hesap Oluştur
+        </button>
+    </form>
+
+    <button class="form-btn geri-btn" onclick="kapat()">
+        Kapat
+    </button>
+</div>
+
+<script>
+function girisAc(){
+    document.getElementById("girisForm").style.display = "block";
+    document.getElementById("kayitForm").style.display = "none";
+}
+
+function kayitAc(){
+    document.getElementById("kayitForm").style.display = "block";
+    document.getElementById("girisForm").style.display = "none";
+}
+
+function kapat(){
+    document.getElementById("girisForm").style.display = "none";
+    document.getElementById("kayitForm").style.display = "none";
+}
+</script>
+
 {% endblock %}
