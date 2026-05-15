@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 import re
+from django import forms
 
 class RegisterForm(forms.Form):
     full_name = forms.CharField(
@@ -65,3 +66,15 @@ class RegisterForm(forms.Form):
         if password and password_confirm and password != password_confirm:
             raise ValidationError("Şifreler eşleşmiyor.")
         return cleaned_data
+    
+class LoginForm(forms.Form):
+    username_or_email = forms.CharField(
+        max_length=150,
+        required=True,
+        label="Kullanıcı Adı"
+    )
+    password = forms.CharField(
+        required=True,
+        widget=forms.PasswordInput,
+        label="Şifre"
+    )

@@ -1,5 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from .models import BlogPost
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.contrib import messages
+from .forms import RegisterForm
+from .models import UserProfile
+from django.contrib.auth import authenticate, login, logout
+from .forms import LoginForm
 
 
 def home(request):
@@ -15,11 +22,7 @@ def blog_detail(request, post_id):
     post = get_object_or_404(BlogPost, id=post_id)
     return render(request, "anasayfa/blog_detail.html", {"post": post})
 
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from django.contrib import messages
-from .forms import RegisterForm
-from .models import UserProfile
+
 
 def register_view(request):
     if request.method == "POST":
@@ -51,4 +54,40 @@ def register_view(request):
     else:
         form = RegisterForm()
     return render(request, "anasayfa/register.html", {"form": form})
-        
+
+def login_view(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username_or_email = form.cleaned_data.get("username_or_email")
+            password = form.cleaned_data["password"]
+            
+            user_obj = User.objects.filter(username=username_or_email).firs()
+            
+            if user_obj is not None:
+                user_obj = User.objects.filter(email=username_or_email).first()
+                
+            if user_obj is not None:
+                user = authenticate(
+                    request,
+                    
+                    username=user_obj.username,
+                    password=password
+                )
+                
+                if user is not None:
+                    login(request, user)
+                    messages.success(request, "Başırıyla giriş yaptınız.")
+                    return redirect("home")
+                else:
+                    messages.error(request, "Şifre hatalı.")
+            else:
+                messages.error(request, "kullanıcı adı veya e-posta bulunamadı.")
+    else:
+        form = LoginForm()
+    return render(request, "anasayfa/login.html", {"form": form})
+
+def logout_view(request):
+    logout(request)
+    messages.success(request, "Başarıyla çıkış yaptınız.")
+    return redirect("home")

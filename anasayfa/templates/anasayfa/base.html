@@ -16,11 +16,20 @@
         <a href="/">Ana Sayfa</a>
         <a href="/blog/">Blog</a>
         <a href="/admin/">Admin</a>
+
+        {% if user.is_authenticated %}
+            <span class="nav-user">Hoş Geldin, {{ user.username}}</span>
+            <a href="{% url 'logout' %}" class="logout-btn">Çıkış Yap</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="login-btn">Giriş Yap</a>
+            <a href="{% url 'register' %}" class="register-btn">Kayıt Ol</a>
+        {% endif %}
     </nav>
 </header>
 
 <main class="container">
     {% block content %}
+  
     {% endblock %}
 </main>
 
