@@ -7,27 +7,20 @@
 
 <section class="hero">
     <h1>Hoş Geldiniz</h1>
-
     <p>
         Hesap oluşturmadan içerikleri keşfedebilir,
         yazıları okuyabilir ve platformu deneyimleyebilirsiniz.
     </p>
+
+    
 </section>
 
-
 <div class="form-container" id="girisForm">
-
-    <button class="close-btn" onclick="kapat()">
-        ×
-    </button>
-
     <h1>Giriş Yap</h1>
 
     <form method="POST">
         {% csrf_token %}
-
         <input type="text" placeholder="Kullanıcı Adı">
-
         <input type="password" placeholder="Şifre">
 
         <button type="submit" class="form-btn giris-btn">
@@ -35,37 +28,21 @@
         </button>
     </form>
 
-    <p class="switch-text">
-        Hesabın yok mu?
-    </p>
-
-    <button class="switch-btn" onclick="kayitAc()">
-        Kayıt Ol
+    <button class="form-btn geri-btn" onclick="kapat()">
+        Kapat
     </button>
-
 </div>
 
-<!-- KAYIT FORMU -->
-
 <div class="form-container" id="kayitForm">
-
-    <button class="close-btn" style="background: red; position: absolute; top: 10px; right: 10px;" >×</button>
-
     <h1>Kayıt Ol</h1>
 
     <form method="POST">
         {% csrf_token %}
-
         <input type="text" placeholder="Ad Soyad">
-
         <input type="text" placeholder="Kullanıcı Adı">
-
         <input type="email" placeholder="E-Mail">
-
         <input type="tel" placeholder="Telefon Numarası">
-
         <input type="password" placeholder="Şifre">
-
         <input type="password" placeholder="Şifre Tekrar">
 
         <button type="submit" class="form-btn kayit-btn">
@@ -73,39 +50,26 @@
         </button>
     </form>
 
-    <p class="switch-text">
-        Zaten hesabın var mı?
-    </p>
-
-    <button class="switch-btn" onclick="girisAc()">
-        Giriş Yap
+    <button class="form-btn geri-btn" onclick="kapat()">
+        Kapat
     </button>
-
 </div>
 
 <script>
-
 function girisAc(){
-
     document.getElementById("girisForm").style.display = "block";
-
     document.getElementById("kayitForm").style.display = "none";
 }
 
 function kayitAc(){
-
     document.getElementById("kayitForm").style.display = "block";
-
     document.getElementById("girisForm").style.display = "none";
 }
 
 function kapat(){
-
     document.getElementById("girisForm").style.display = "none";
-
     document.getElementById("kayitForm").style.display = "none";
 }
-
 </script>
 
 {% endblock %}
