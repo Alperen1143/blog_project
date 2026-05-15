@@ -17,8 +17,8 @@
         <a href="/blog/">Blog</a>
         <a href="/admin/">Admin</a>
 
-        <button class="giris-navbar" onclick="girisAc()">Giriş Yap</button>
-    
+        <button class="giris-navbar" type="button" onclick="girisAc()">Giriş Yap</button>
+        <button class="kayit-navbar" type="button" onclick="kayitAc()">Kayıt Ol</button>
     </nav>
 </header>
 
@@ -30,6 +30,78 @@
 <footer class="footer">
     <p>© 2026 Blog Sitem</p>
 </footer>
+
+<div id="girisModal" class="auth-modal">
+    <div class="auth-box">
+        <button class="auth-close" type="button" onclick="girisKapat()">×</button>
+
+        <h2>Giriş Yap</h2>
+
+        <form method="post" action="#">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Kullanıcı Adı">
+            <input type="password" name="password" placeholder="Şifre">
+
+            <button type="submit" class="auth-submit">Giriş Yap</button>
+        </form>
+
+        <p class="auth-text">Hesabın yok mu?</p>
+        <button class="auth-secondary" type="button" onclick="kayitAc()">Kayıt Ol</button>
+    </div>
+</div>
+
+<div id="kayitModal" class="auth-modal">
+    <div class="auth-box">
+        <button class="auth-close" type="button" onclick="kayitKapat()">×</button>
+
+        <h2>Kayıt Ol</h2>
+
+        <form method="post" action="#">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Kullanıcı Adı">
+            <input type="email" name="email" placeholder="E-posta">
+            <input type="password" name="password" placeholder="Şifre">
+
+            <button type="submit" class="auth-submit">Kayıt Ol</button>
+        </form>
+
+        <p class="auth-text">Zaten hesabın var mı?</p>
+        <button class="auth-secondary" type="button" onclick="girisAc()">Giriş Yap</button>
+    </div>
+</div>
+
+<script>
+    function girisAc() {
+        document.getElementById("girisModal").style.display = "flex";
+        document.getElementById("kayitModal").style.display = "none";
+    }
+
+    function girisKapat() {
+        document.getElementById("girisModal").style.display = "none";
+    }
+
+    function kayitAc() {
+        document.getElementById("kayitModal").style.display = "flex";
+        document.getElementById("girisModal").style.display = "none";
+    }
+
+    function kayitKapat() {
+        document.getElementById("kayitModal").style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        const girisModal = document.getElementById("girisModal");
+        const kayitModal = document.getElementById("kayitModal");
+
+        if (event.target === girisModal) {
+            girisModal.style.display = "none";
+        }
+
+        if (event.target === kayitModal) {
+            kayitModal.style.display = "none";
+        }
+    }
+</script>
 
 </body>
 </html>
