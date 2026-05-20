@@ -1,3 +1,6 @@
+from datetime import datetime
+
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -32,6 +35,61 @@ def category_posts(request, slug):
 def blog_detail(request, post_id):
     post = get_object_or_404(BlogPost, id=post_id)
     return render(request, "anasayfa/blog_detail.html", {"post": post})
+
+
+def nasa_apod(request):
+    context = {}
+
+    if request.method == "POST":
+        selected_date = request.POST.get("date", "").strip()
+        context["selected_date"] = selected_date
+
+        try:
+            datetime.strptime(selected_date, "%Y-%m-%d")
+        except ValueError:
+            context["error_message"] = "Lütfen YYYY-MM-DD formatında geçerli bir tarih seçin."
+        else:
+            try:
+                import requests
+            except ImportError:
+                context["error_message"] = "NASA isteği için requests kütüphanesi kurulmalıdır."
+            else:
+                try:
+                    response = requests.get(
+                        "https://api.nasa.gov/planetary/apod",
+                        params={
+                            "api_key": settings.NASA_API_KEY,
+                            "date": selected_date,
+                        },
+                        timeout=10,
+                    )
+                    data = response.json()
+
+                    if response.status_code == 200:
+                        context["apod"] = {
+                            "title": data.get("title"),
+                            "date": data.get("date"),
+                            "explanation": data.get("explanation"),
+                            "url": data.get("url"),
+                            "media_type": data.get("media_type"),
+                            "copyright": data.get("copyright"),
+                        }
+                    else:
+                        api_error = data.get("msg")
+
+                        if not api_error and isinstance(data.get("error"), dict):
+                            api_error = data["error"].get("message")
+
+                        context["error_message"] = (
+                            api_error
+                            or "NASA API isteği başarısız oldu. Lütfen tarihi kontrol edip tekrar deneyin."
+                        )
+                except requests.RequestException:
+                    context["error_message"] = "NASA API'ye şu anda ulaşılamıyor. Lütfen daha sonra tekrar deneyin."
+                except ValueError:
+                    context["error_message"] = "NASA API geçersiz bir yanıt döndürdü."
+
+    return render(request, "anasayfa/nasa_apod.html", context)
 
 
 def register_view(request):

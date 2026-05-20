@@ -417,3 +417,48 @@ body {
     margin: 5px 0;
     padding-left: 18px;
 }
+
+.nasa-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.nasa-form {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin: 20px 0 28px;
+}
+
+.nasa-form input {
+    padding: 12px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+.nasa-form button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #111827;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.nasa-card {
+    padding: 24px;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+}
+
+.nasa-card img {
+    width: 100%;
+    max-height: 520px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin: 16px 0;
+}

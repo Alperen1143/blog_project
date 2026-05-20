@@ -1,0 +1,42 @@
+{% extends "anasayfa/base.html" %}
+
+{% block title %}Doğum Günümde NASA Ne Çekti?{% endblock %}
+
+{% block main_class %}nasa-page{% endblock %}
+
+{% block content %}
+<h1>Doğum Günümde NASA Ne Çekti?</h1>
+
+<form method="post" class="nasa-form">
+    {% csrf_token %}
+    <input type="date" name="date" value="{{ selected_date }}" required>
+    <button type="submit">Göster</button>
+</form>
+
+{% if error_message %}
+    <p class="message">{{ error_message }}</p>
+{% endif %}
+
+{% if apod %}
+    <article class="nasa-card">
+        <h2>{{ apod.title }}</h2>
+        <small>{{ apod.date }}</small>
+
+        {% if apod.media_type == "image" %}
+            <img src="{{ apod.url }}" alt="{{ apod.title }}">
+        {% elif apod.media_type == "video" %}
+            <p>
+                <a href="{{ apod.url }}" target="_blank" rel="noopener noreferrer">
+                    NASA videosunu aç
+                </a>
+            </p>
+        {% endif %}
+
+        {% if apod.copyright %}
+            <p><strong>Telif:</strong> {{ apod.copyright }}</p>
+        {% endif %}
+
+        <p>{{ apod.explanation }}</p>
+    </article>
+{% endif %}
+{% endblock %}

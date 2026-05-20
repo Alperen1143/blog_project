@@ -15,6 +15,7 @@
     <nav class="nav-links">
         <a href="{% url 'home' %}">Ana Sayfa</a>
         <a href="{% url 'blog_list' %}">Blog</a>
+        <a href="{% url 'nasa_apod' %}">NASA Fotoğrafı</a>
         <a href="/admin/">Admin</a>
 
         {% if user.is_authenticated %}
