@@ -18,12 +18,16 @@
         <a href="{% url 'nasa_apod' %}">NASA Fotoğrafı</a>
         <a href="/admin/">Admin</a>
 
-        {% if user.is_authenticated %}
-            <span class="navbar-user">Merhaba, {{ user.username }}</span>
-            <a href="{% url 'logout' %}" class="logout-navbar">Çıkış Yap</a>
-        {% else %}
-            <button class="giris-navbar" type="button" onclick="girisAc()">Giriş Yap</button>
-        {% endif %}
+        <div class="nav-actions">
+            {% if user.is_authenticated %}
+                <span class="navbar-user">Merhaba, {{ user.username }}</span>
+                <a href="{% url 'logout' %}" class="logout-navbar">Çıkış Yap</a>
+            {% else %}
+                <button class="giris-navbar" type="button" onclick="girisAc()">Giriş Yap</button>
+            {% endif %}
+
+            <div id="weatherWidget" class="weather-widget"> Hava durumu yükleniyor...</div>
+        </div>
     </nav>
 </header>
 
@@ -107,6 +111,64 @@
             girisAc();
         }
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const weatherWidget = document.getElementById("weatherWidget");
+
+        if (!weatherWidget) {
+            return;
+        }
+
+        function renderWeather(data) {
+            if (!data || data.error) {
+                weatherWidget.textContent = "hava durumu alınamadı";
+                return;
+            }
+
+            const city = data.city || "Siirt";
+            const temp = data.temp !== null && data.temp !== undefined
+                ? Math.round(Number(data.temp))
+                : "";
+            const description = data.description || "hava durumu";
+            const text = city + ": " + temp + "°C - " + description;
+
+            
+
+weatherWidget.textContent = text;
+        }
+
+        function loadWeather(url) {
+            fetch(url)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(renderWeather)
+                .catch(function() {
+                    weatherWidget.textContent = "hava durumu alınamadı";
+                });
+        }
+
+        function loadDefaultWeather() {
+            loadWeather("{% url 'weather_current' %}");
+        }
+
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const latitude = encodeURIComponent(position.coords.latitude);
+                    const longitude = encodeURIComponent(position.coords.longitude);
+                    loadWeather("{% url 'weather_current' %}?lat=" + latitude + "&lon=" + longitude);
+                },
+                loadDefaultWeather,
+                {
+                    timeout: 5000,
+                    maximumAge: 600000
+                }
+            );
+        } else {
+            loadDefaultWeather();
+        }
+    });
 </script>
 
 </body>

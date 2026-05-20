@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.conf import settings
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -90,6 +91,78 @@ def nasa_apod(request):
                     context["error_message"] = "NASA API geçersiz bir yanıt döndürdü."
 
     return render(request, "anasayfa/nasa_apod.html", context)
+
+
+def weather_current(request):
+    if not settings.OPENWEATHER_API_KEY:
+        return JsonResponse(
+            {"error": "OpenWeather API anahtarı ayarlı değil."},
+            status=503,
+        )
+
+    lat = request.GET.get("lat")
+    lon = request.GET.get("lon")
+    params = {
+        "appid": settings.OPENWEATHER_API_KEY,
+        "units": "metric",
+        "lang": "tr",
+    }
+
+    if lat and lon:
+        try:
+            params["lat"] = float(lat)
+            params["lon"] = float(lon)
+        except ValueError:
+            return JsonResponse(
+                {"error": "Geçersiz konum bilgisi."},
+                status=400,
+            )
+    else:
+        params["q"] = "Siirt,TR"
+
+    try:
+        import requests
+    except ImportError:
+        return JsonResponse(
+            {"error": "Hava durumu isteği için requests kütüphanesi kurulmalıdır."},
+            status=500,
+        )
+
+    try:
+        response = requests.get(
+            "https://api.openweathermap.org/data/2.5/weather",
+            params=params,
+            timeout=10,
+        )
+        data = response.json()
+    except requests.RequestException:
+        return JsonResponse(
+            {"error": "Hava durumu servisine şu anda ulaşılamıyor."},
+            status=503,
+        )
+    except ValueError:
+        return JsonResponse(
+            {"error": "Hava durumu servisi geçersiz yanıt döndürdü."},
+            status=502,
+        )
+
+    if response.status_code != 200:
+        return JsonResponse(
+            {"error": data.get("message") or "Hava durumu bilgisi alınamadı."},
+            status=response.status_code,
+        )
+
+    weather = data.get("weather") or [{}]
+    main = data.get("main") or {}
+
+    return JsonResponse(
+        {
+            "city": data.get("name"),
+            "temp": main.get("temp"),
+            "description": weather[0].get("description"),
+            "icon": weather[0].get("icon"),
+        }
+    )
 
 
 def register_view(request):

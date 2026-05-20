@@ -462,3 +462,38 @@ body {
     border-radius: 8px;
     margin: 16px 0;
 }
+
+.nav-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.giris-navbar,
+.logout-navbar {
+    margin-left: 0;
+}
+
+.weather-widget {
+    margin-left: 10px;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    line-height: 1;
+    display: inline-block;
+}
+
+.weather-widget img {
+    display: none;
+}
+
+.weather-widget span {
+    display: inline-block;
+    max-width: 210px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
