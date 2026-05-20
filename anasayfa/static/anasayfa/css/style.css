@@ -27,7 +27,6 @@ body {
     color: white;
     padding: 16px 10%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
 }
 
@@ -40,6 +39,8 @@ body {
     display: flex;
     align-items: center;
     gap: 14px;
+    width: 100%;
+    margin-left: 40px;
 }
 
 .nav-links a {
@@ -47,7 +48,11 @@ body {
     text-decoration: none;
 }
 
-.giris-navbar,
+.giris-navbar {
+    margin-left: auto;
+    background: white;
+    color: #111827;
+}
 .kayit-navbar {
     padding: 9px 14px;
     border: none;
@@ -198,7 +203,7 @@ body {
     padding: 20px;
     background-color: #222;
     color: white;
-    margin-top: 40px;
+    margin-top: 0;
 }
 
 @media (max-width: 768px) {
@@ -328,6 +333,10 @@ body {
     color: #ffffff;
     font-weight: 700;
     cursor: pointer;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+
 }
 
 .auth-secondary:hover {
@@ -347,4 +356,64 @@ body {
     font-size: 24px;
     font-weight: 700;
     cursor: pointer;
+}
+.register-page {
+    min-height: calc(100vh - 140px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    margin: 0;
+
+    background-color: #f3f4f6;
+    background-image: url("/static/anasayfa/images/doodle-bg.png");
+    background-repeat: repeat;
+    background-size: 420px;
+    background-position: center;
+
+    padding: 40px 20px;
+}
+
+.register-form {
+    display: block;
+    position: static;
+    transform: none;
+    margin: 0 auto;
+}
+.navbar-user {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.logout-navbar {
+    margin-left: auto;
+    background: #ffffff;
+    color: #111111 !important;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.logout-navbar:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+.form-errors {
+    margin-bottom: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(255, 61, 70, 0.15);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 61, 70, 0.35);
+    font-size: 14px;
+}
+
+.form-errors ul {
+    margin: 5px 0;
+    padding-left: 18px;
 }

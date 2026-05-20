@@ -13,16 +13,20 @@
     <div class="logo">Blog Sitem</div>
 
     <nav class="nav-links">
-        <a href="/">Ana Sayfa</a>
-        <a href="/blog/">Blog</a>
+        <a href="{% url 'home' %}">Ana Sayfa</a>
+        <a href="{% url 'blog_list' %}">Blog</a>
         <a href="/admin/">Admin</a>
 
-        <button class="giris-navbar" type="button" onclick="girisAc()">Giriş Yap</button>
-        <button class="kayit-navbar" type="button" onclick="kayitAc()">Kayıt Ol</button>
+        {% if user.is_authenticated %}
+            <span class="navbar-user">Merhaba, {{ user.username }}</span>
+            <a href="{% url 'logout' %}" class="logout-navbar">Çıkış Yap</a>
+        {% else %}
+            <button class="giris-navbar" type="button" onclick="girisAc()">Giriş Yap</button>
+        {% endif %}
     </nav>
 </header>
 
-<main class="container">
+<main class="{% block main_class %}container{% endblock %}">
     {% block content %}
     {% endblock %}
 </main>
@@ -31,74 +35,75 @@
     <p>© 2026 Blog Sitem</p>
 </footer>
 
+{% if not user.is_authenticated %}
 <div id="girisModal" class="auth-modal">
     <div class="auth-box">
         <button class="auth-close" type="button" onclick="girisKapat()">×</button>
 
         <h2>Giriş Yap</h2>
 
-        <form method="post" action="#">
+        {% if messages %}
+            {% for message in messages %}
+                <p class="auth-message">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
-            <input type="text" name="username" placeholder="Kullanıcı Adı">
-            <input type="password" name="password" placeholder="Şifre">
+
+            <input
+                type="text"
+                name="username_or_email"
+                placeholder="Kullanıcı Adı veya E-posta"
+                required
+            >
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Şifre"
+                required
+            >
 
             <button type="submit" class="auth-submit">Giriş Yap</button>
         </form>
 
         <p class="auth-text">Hesabın yok mu?</p>
-        <button class="auth-secondary" type="button" onclick="kayitAc()">Kayıt Ol</button>
+        <a href="{% url 'register' %}" class="auth-secondary">Kayıt Ol</a>
     </div>
 </div>
-
-<div id="kayitModal" class="auth-modal">
-    <div class="auth-box">
-        <button class="auth-close" type="button" onclick="kayitKapat()">×</button>
-
-        <h2>Kayıt Ol</h2>
-
-        <form method="post" action="#">
-            {% csrf_token %}
-            <input type="text" name="username" placeholder="Kullanıcı Adı">
-            <input type="email" name="email" placeholder="E-posta">
-            <input type="password" name="password" placeholder="Şifre">
-
-            <button type="submit" class="auth-submit">Kayıt Ol</button>
-        </form>
-
-        <p class="auth-text">Zaten hesabın var mı?</p>
-        <button class="auth-secondary" type="button" onclick="girisAc()">Giriş Yap</button>
-    </div>
-</div>
+{% endif %}
 
 <script>
     function girisAc() {
-        document.getElementById("girisModal").style.display = "flex";
-        document.getElementById("kayitModal").style.display = "none";
+        const girisModal = document.getElementById("girisModal");
+
+        if (girisModal) {
+            girisModal.style.display = "flex";
+        }
     }
 
     function girisKapat() {
-        document.getElementById("girisModal").style.display = "none";
-    }
+        const girisModal = document.getElementById("girisModal");
 
-    function kayitAc() {
-        document.getElementById("kayitModal").style.display = "flex";
-        document.getElementById("girisModal").style.display = "none";
-    }
-
-    function kayitKapat() {
-        document.getElementById("kayitModal").style.display = "none";
+        if (girisModal) {
+            girisModal.style.display = "none";
+        }
     }
 
     window.onclick = function(event) {
         const girisModal = document.getElementById("girisModal");
-        const kayitModal = document.getElementById("kayitModal");
 
-        if (event.target === girisModal) {
+        if (girisModal && event.target === girisModal) {
             girisModal.style.display = "none";
         }
+    }
 
-        if (event.target === kayitModal) {
-            kayitModal.style.display = "none";
+    window.onload = function() {
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.get("login_error") === "1") {
+            girisAc();
         }
     }
 </script>
