@@ -13,16 +13,25 @@
     <div class="logo">Blog Sitem</div>
 
     <nav class="nav-links">
-        <a href="/">Ana Sayfa</a>
-        <a href="/blog/">Blog</a>
+        <a href="{% url 'home' %}">Ana Sayfa</a>
+        <a href="{% url 'blog_list' %}">Blog</a>
+        <a href="{% url 'nasa_apod' %}">NASA Fotoğrafı</a>
         <a href="/admin/">Admin</a>
 
-        <button class="giris-navbar" onclick="girisAc()">Giriş Yap</button>
-        <button class="kayit-navbar" onclick="kayitAc()">Kayıt Ol</button>
+        <div class="nav-actions">
+            {% if user.is_authenticated %}
+                <span class="navbar-user">Merhaba, {{ user.username }}</span>
+                <a href="{% url 'logout' %}" class="logout-navbar">Çıkış Yap</a>
+            {% else %}
+                <button class="giris-navbar" type="button" onclick="girisAc()">Giriş Yap</button>
+            {% endif %}
+
+            <div id="weatherWidget" class="weather-widget"> Hava durumu yükleniyor...</div>
+        </div>
     </nav>
 </header>
 
-<main class="container">
+<main class="{% block main_class %}container{% endblock %}">
     {% block content %}
     {% endblock %}
 </main>
@@ -30,6 +39,137 @@
 <footer class="footer">
     <p>© 2026 Blog Sitem</p>
 </footer>
+
+{% if not user.is_authenticated %}
+<div id="girisModal" class="auth-modal">
+    <div class="auth-box">
+        <button class="auth-close" type="button" onclick="girisKapat()">×</button>
+
+        <h2>Giriş Yap</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p class="auth-message">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+
+            <input
+                type="text"
+                name="username_or_email"
+                placeholder="Kullanıcı Adı veya E-posta"
+                required
+            >
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Şifre"
+                required
+            >
+
+            <button type="submit" class="auth-submit">Giriş Yap</button>
+        </form>
+
+        <p class="auth-text">Hesabın yok mu?</p>
+        <a href="{% url 'register' %}" class="auth-secondary">Kayıt Ol</a>
+    </div>
+</div>
+{% endif %}
+
+<script>
+    function girisAc() {
+        const girisModal = document.getElementById("girisModal");
+
+        if (girisModal) {
+            girisModal.style.display = "flex";
+        }
+    }
+
+    function girisKapat() {
+        const girisModal = document.getElementById("girisModal");
+
+        if (girisModal) {
+            girisModal.style.display = "none";
+        }
+    }
+
+    window.onclick = function(event) {
+        const girisModal = document.getElementById("girisModal");
+
+        if (girisModal && event.target === girisModal) {
+            girisModal.style.display = "none";
+        }
+    }
+
+    window.onload = function() {
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.get("login_error") === "1") {
+            girisAc();
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const weatherWidget = document.getElementById("weatherWidget");
+
+        if (!weatherWidget) {
+            return;
+        }
+
+        function renderWeather(data) {
+            if (!data || data.error) {
+                weatherWidget.textContent = "hava durumu alınamadı";
+                return;
+            }
+
+            const city = data.city || "Siirt";
+            const temp = data.temp !== null && data.temp !== undefined
+                ? Math.round(Number(data.temp))
+                : "";
+            const description = data.description || "hava durumu";
+            const text = city + ": " + temp + "°C - " + description;
+
+            
+
+weatherWidget.textContent = text;
+        }
+
+        function loadWeather(url) {
+            fetch(url)
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(renderWeather)
+                .catch(function() {
+                    weatherWidget.textContent = "hava durumu alınamadı";
+                });
+        }
+
+        function loadDefaultWeather() {
+            loadWeather("{% url 'weather_current' %}");
+        }
+
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const latitude = encodeURIComponent(position.coords.latitude);
+                    const longitude = encodeURIComponent(position.coords.longitude);
+                    loadWeather("{% url 'weather_current' %}?lat=" + latitude + "&lon=" + longitude);
+                },
+                loadDefaultWeather,
+                {
+                    timeout: 5000,
+                    maximumAge: 600000
+                }
+            );
+        } else {
+            loadDefaultWeather();
+        }
+    });
+</script>
 
 </body>
 </html>

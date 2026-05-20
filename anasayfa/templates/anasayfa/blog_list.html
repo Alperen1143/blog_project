@@ -5,9 +5,18 @@
 {% block content %}
 <h1>Blog Yazıları</h1>
 
+{% if category %}
+    <h2>{{ category.name }}</h2>
+{% endif %}
+
 {% for post in posts %}
     <div class="blog-card">
         <h2>{{ post.title }}</h2>
+        {% if post.category %}
+            <p>Kategori: <a href="{% url 'category_posts' post.category.slug %}">{{ post.category.name }}</a></p>
+        {% else %}
+            <p>Kategori: Yok</p>
+        {% endif %}
         <p>{{ post.content|truncatewords:25 }}</p>
         <small>{{ post.created_at }}</small>
         <br>

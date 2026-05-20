@@ -1,0 +1,47 @@
+{% extends "anasayfa/base.html" %}
+{% load static %}
+
+{% block title %}Kayıt Ol{% endblock %}
+
+{% block main_class %}register-page{% endblock %}
+
+{% block content %}
+
+<div class="form-container register-form">
+    <h1>Kayıt Ol</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p class="message">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    {% if form.errors %}
+        <div class="form-errors">
+            {{ form.errors }}
+        </div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'register' %}">
+        {% csrf_token %}
+
+        <input type="text" name="full_name" placeholder="Ad Soyad" required>
+        <input type="text" name="username" placeholder="Kullanıcı Adı" required>
+        <input type="email" name="email" placeholder="E-Mail" required>
+        <input type="tel" name="phone" placeholder="Telefon Numarası" required>
+        <input type="password" name="password" placeholder="Şifre" required>
+        <input type="password" name="password_confirm" placeholder="Şifre Tekrar" required>
+
+        <button type="submit" class="form-btn kayit-btn">
+            Hesap Oluştur
+        </button>
+    </form>
+
+    <p class="switch-text">
+        Zaten hesabın var mı?
+    </p>
+
+    <a href="{% url 'home' %}" class="btn">Giriş Yap</a>
+</div>
+
+{% endblock %}

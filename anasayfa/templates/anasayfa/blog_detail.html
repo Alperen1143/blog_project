@@ -5,6 +5,11 @@
 {% block content %}
 <div class="blog-detail">
     <h1>{{ post.title }}</h1>
+    {% if post.category %}
+        <p>Kategori: <a href="{% url 'category_posts' post.category.slug %}">{{ post.category.name }}</a></p>
+    {% else %}
+        <p>Kategori: Yok</p>
+    {% endif %}
     <small>{{ post.created_at }}</small>
     <p>{{ post.content }}</p>
 </div>
